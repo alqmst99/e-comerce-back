@@ -31,8 +31,27 @@ var userSchema = new mongoose.Schema({
     },
     role:{
         type: String,
-        default: user
-    }
+        default: "user"
+    },
+    isBlocked:{
+        type: Boolean,
+        default: false
+    },
+    car: {
+        type: Array,
+        default:[]
+    },
+    address:[{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Address"
+    }],
+    wishlist:[{
+        type: mongoose.Schema.Types.ObjectId,
+        ref:"product"
+    }]
+
+}, {
+    timeseries:true
 });
 
 //pre function
