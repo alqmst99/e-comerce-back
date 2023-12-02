@@ -4,7 +4,8 @@
   "description": "\"Aplication SPA created with MERN stack, this folder are the componet in the back-end interfaces\"",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon --watch src src/index.js"
   },
   "author": "\"Nahuel N. Pierini\"",
   "license": "ISC",
@@ -19,6 +20,6 @@
     "mongoose": "^8.0.0"
   },
   "devDependencies": {
-    "nodemon": "^3.0.1"
+    "nodemon": "^3.0.2"
   }
 }
