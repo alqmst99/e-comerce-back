@@ -5,7 +5,7 @@ const authRouter= require('./Routes/authRoute');
 const bodyParser = require("body-parser");
 const { notFound, errorHandler } = require("./middlewares/errorHandle");
 const cookieParser = require("cookie-parser");
-
+const productRoute = require('./Routes/productRoute')
 
 //iniicalize Express
 const app= express();
@@ -23,10 +23,11 @@ app.use('/', (req,res)=>{
 
 
 //Route
-app.use('/api/user', authRouter)
+app.use('/api/user', authRouter);
+app.use('/api/product', productRoute);
 
-app.use(notFound)
-app.use(errorHandler)
+app.use(notFound);
+app.use(errorHandler);
 
 app.listen(PORT, ()=>{
     console.log(`The server is running at PORT: ${PORT}`)
