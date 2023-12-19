@@ -1,4 +1,4 @@
-const { default: mongoose } = require("mongoose");
+const  mongoose = require("mongoose");
 
 //Declarate the Schema of the Mongo model
 var productSchema= new mongoose.Schema({
@@ -46,7 +46,7 @@ var productSchema= new mongoose.Schema({
             postedby:{type: mongoose.Schema.Types.ObjectId, ref: "User"}
         }], 
     }
-}, {timestamps:true});
+}, { timeseries:true});
 
 //Export model
 module.exports= mongoose.model("Product", productSchema);

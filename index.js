@@ -5,7 +5,7 @@ const authRouter= require('./Routes/authRoute');
 const bodyParser = require("body-parser");
 const { notFound, errorHandler } = require("./middlewares/errorHandle");
 const cookieParser = require("cookie-parser");
-const productRoute = require('./Routes/productRoute')
+const productRoute = require('./Routes/productRoute');
 
 //iniicalize Express
 const app= express();
@@ -16,9 +16,9 @@ dbConnect();
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({extended:false}))
 app.use(cookieParser())
-app.use('/', (req,res)=>{
-    res.send('wellcome in the server side')
-});
+//app.use('/', (req,res)=>{
+//    res.send('wellcome in the server side')
+//});
 
 
 
