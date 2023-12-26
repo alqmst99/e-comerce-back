@@ -54,7 +54,7 @@ var userSchema = new mongoose.Schema({
         
     }
 
-}, {
+},{
     timeseries:true
 });
 

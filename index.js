@@ -6,6 +6,7 @@ const bodyParser = require("body-parser");
 const { notFound, errorHandler } = require("./middlewares/errorHandle");
 const cookieParser = require("cookie-parser");
 const productRoute = require('./Routes/productRoute');
+const morgan = require("morgan");
 
 //iniicalize Express
 const app= express();
@@ -13,6 +14,7 @@ const PORT = process.env.PORT || 4000;
 
 //Conncetion DB
 dbConnect();
+app.use(morgan("dev"))
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({extended:false}))
 app.use(cookieParser())
@@ -24,6 +26,7 @@ app.use(cookieParser())
 
 //Route
 app.use('/api/user', authRouter);
+
 app.use('/api/product', productRoute);
 
 app.use(notFound);
