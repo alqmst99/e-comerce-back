@@ -72,9 +72,9 @@ userSchema.methods.isPasswordMatched = async function (enteredPassword) {
     return await bcrypt.compare(enteredPassword, this.password)
 };
 //resetPassword
-userSchema.method.createPasswordResetToken = async function(){
-    const resetToken =crypto.randomBytes.toString("hex");
-    this.passwordResetToken = crypto.createHash('sha256').update(resetToken).digest("hex");
+userSchema.methods.createPasswordResetToken = async function(){
+    const resetToken =require('crypto').randomBytes(32).toString("hex");
+    this.passwordResetToken = require('crypto').createHash('sha256').update(resetToken).digest("hex");
     this.passwordResetExpires= Date.now() + 30*60*1000; // 10 minutes
     return resetToken;
 }

@@ -5,7 +5,9 @@ const authRouter= require('./Routes/authRoute');
 const bodyParser = require("body-parser");
 const { notFound, errorHandler } = require("./middlewares/errorHandle");
 const cookieParser = require("cookie-parser");
-const productRoute = require('./Routes/productRoute');
+const productRouter = require('./Routes/productRoute');
+const blogRouter = require('./Routes/blogRoute');
+
 const morgan = require("morgan");
 
 //iniicalize Express
@@ -26,8 +28,8 @@ app.use(cookieParser())
 
 //Route
 app.use('/api/user', authRouter);
-
-app.use('/api/product', productRoute);
+app.use('/api/product', productRouter);
+app.use('/api/blog', blogRouter);
 
 app.use(notFound);
 app.use(errorHandler);
