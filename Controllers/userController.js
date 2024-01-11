@@ -11,9 +11,9 @@ const { JsonWebTokenError } = require("jsonwebtoken");
 const jwt = require("jsonwebtoken");
 const sendEmail = require("./emailController");
 
-// controllers for user: Login, register, views, validate
+//*************************Api Rest USER Controller *************************//
 
-//create user
+//Create user
 const createUser = asyncHandler(async (req, res, next) => {
   const email = req.body.email;
   const findUser = await User.findOne({ email: email });
@@ -32,7 +32,7 @@ const createUser = asyncHandler(async (req, res, next) => {
   }
 });
 
-//login user
+//Login user
 
 const loginUserCtrl = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
@@ -65,7 +65,7 @@ const loginUserCtrl = asyncHandler(async (req, res) => {
   }
 });
 
-// handler Refresh token
+// Handler Refresh token
 const handlerRefreshToken = asyncHandler(async (req, res) => {
   const cookie = req.cookies;
   if (!cookie.refresToken) throw new Error("No Refresh Token in Cookies");
@@ -198,6 +198,8 @@ const blockUser = asyncHandler(async (req, res) => {
     throw new Error(error);
   }
 });
+
+//Unblock User
 const unBlockUser = asyncHandler(async (req, res) => {
   const { id } = req.params;
   try {
@@ -218,6 +220,8 @@ const unBlockUser = asyncHandler(async (req, res) => {
   }
 });
 
+
+//Update Password
 const updatePassword = asyncHandler( async (req, res)=>{
   const{_id}= req.user;
   const {password} = req.body;
@@ -232,6 +236,7 @@ const updatePassword = asyncHandler( async (req, res)=>{
   }
 });
 
+//Forgot password
 
 const forgotPasswordToken = asyncHandler(async(req, res)=>{
 const {email}= req.body;
@@ -253,6 +258,8 @@ try {
   throw new Error(error);
 }
 });
+
+//Reset password
 
 const resetPassword = asyncHandler( async(req, res)=>{
   const{password} = req.body;

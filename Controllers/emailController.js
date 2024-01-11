@@ -2,6 +2,9 @@ const nodemailer=require('nodemailer');
 const asynchandler= require('express-async-handler');
 const { getMaxListeners } = require('../Models/userModel');
 
+//*************************Api Rest Email Controller with nodemailer *************************//
+
+
 const sendEmail= asynchandler(async(data, req, res)=>{
 let trasnporter = nodemailer.createTransport({
     host: "smtp.gmail.com",

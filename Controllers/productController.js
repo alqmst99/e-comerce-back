@@ -2,6 +2,9 @@ const Product = require("../Models/productModel");
 const asyncHandler = require("express-async-handler");
 const slugify = require("slugify");
 
+
+//*************************Api Rest Product Controller *************************/
+
 //Create product
 const createProduct = asyncHandler(async (req, res) => {
   if (req.body.title) {
