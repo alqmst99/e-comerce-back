@@ -6,6 +6,8 @@ const bodyParser = require("body-parser");
 const { notFound, errorHandler } = require("./middlewares/errorHandle");
 const cookieParser = require("cookie-parser");
 const productRouter = require('./Routes/productRoute');
+const categoryRouter = require('./Routes/categoryRoute');
+const blogCatRouter = require('./Routes/blogCatRouter');
 const blogRouter = require('./Routes/blogRoute');
 
 const morgan = require("morgan");
@@ -30,6 +32,8 @@ app.use(cookieParser())
 app.use('/api/user', authRouter);
 app.use('/api/product', productRouter);
 app.use('/api/blog', blogRouter);
+app.use('/api/product/cat', categoryRouter)
+app.use('/api/blog/cat', blogCatRouter)
 
 app.use(notFound);
 app.use(errorHandler);
