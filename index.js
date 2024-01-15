@@ -10,6 +10,7 @@ const categoryRouter = require('./Routes/categoryRoute');
 const blogCatRouter = require('./Routes/blogCatRouter');
 const brandRouter = require('./Routes/brandRoute');
 const blogRouter = require('./Routes/blogRoute');
+const cuponRouter = require('./Routes/cuponRoute');
 
 const morgan = require("morgan");
 
@@ -36,6 +37,7 @@ app.use('/api/blog', blogRouter);
 app.use('/api/product/cat', categoryRouter);
 app.use('/api/blog/cat', blogCatRouter);
 app.use('/api/brand', brandRouter);
+app.use('/api/cupon', cuponRouter);
 app.use(notFound);
 app.use(errorHandler);
 
