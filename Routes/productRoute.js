@@ -1,5 +1,5 @@
 const express = require("express");
-const { createProduct, getAProduct, getAllProduct, updateProduct, deleteProduct } = require("../Controllers/productController");
+const { createProduct, getAProduct, getAllProduct, updateProduct, deleteProduct, addToWishList, rating } = require("../Controllers/productController");
 const {isAdmin, authMiddlewere} = require('../middlewares/authMiddlewere');
 const router = express.Router();
 
@@ -16,6 +16,13 @@ router.get('/', getAllProduct);
 //Update product Route
 
 router.put('/:id', authMiddlewere ,isAdmin, updateProduct);
+
+//Add Wish List
+router.put('/wishlist', authMiddlewere ,isAdmin, addToWishList);
+
+//Rating
+
+router.put('/rating', authMiddlewere ,isAdmin, rating);
 
 //Delete product Route
 

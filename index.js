@@ -8,11 +8,12 @@ const cookieParser = require("cookie-parser");
 const productRouter = require('./Routes/productRoute');
 const categoryRouter = require('./Routes/categoryRoute');
 const blogCatRouter = require('./Routes/blogCatRouter');
+const brandRouter = require('./Routes/brandRoute');
 const blogRouter = require('./Routes/blogRoute');
 
 const morgan = require("morgan");
 
-//iniicalize Express
+//inicalize Express
 const app= express();
 const PORT = process.env.PORT || 4000;
 
@@ -32,12 +33,12 @@ app.use(cookieParser())
 app.use('/api/user', authRouter);
 app.use('/api/product', productRouter);
 app.use('/api/blog', blogRouter);
-app.use('/api/product/cat', categoryRouter)
-app.use('/api/blog/cat', blogCatRouter)
-
+app.use('/api/product/cat', categoryRouter);
+app.use('/api/blog/cat', blogCatRouter);
+app.use('/api/brand', brandRouter);
 app.use(notFound);
 app.use(errorHandler);
 
 app.listen(PORT, ()=>{
-    console.log(`The server is running at PORT: ${PORT}`)
+    console.log(`The server is running at PORT: ${PORT}`);
 });

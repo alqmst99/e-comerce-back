@@ -106,6 +106,76 @@ const getAllProduct = asyncHandler(async (req, res) => {
     throw new Error(error);
   }
 });
+//Wish List
+
+const addToWishList = asyncHandler(async (req, res)=>{
+  const { _id }= req.user;
+  const {proId}= req.body;
+  try {
+    const user = await User.findById(_id);
+    const alreadyAdded= user.wishlist.find( (id)=> id.toString()=== proId);
+    if (alreadyAdded) {
+      let user = await User.findOneAndUpdate(_id, {
+        $push: {wishlist: proId},
+      }, {
+        new: true,
+      });
+      res.json(user);
+    } else {
+      
+    }
+  } catch (error) {
+    throw new Error(error);
+  }
+});
+
+//Rating Ratio
+const rating = asyncHandler( async(req, res)=>{
+const { _id}= req.user;
+const{ star, prodId, comment}= req.body;
+try {
+  const product = await Product.findById(prodId);
+let allreadyRated= product.rating.find((userId)=> userId.postedby.toString()=== _id.toString());
+if (allreadyRated) {
+  
+const updateRating= await Product.updateOne({
+  rating:{ $elemMatch: allreadyRated}
+},{ 
+  $set:{"rating.$.star": star,"rating.$.comment": comment}
+},{
+  new:true,
+})
+
+
+} else {
+ const rateProduct= await Product.findByIdAndUpdate(prodId,{
+  $push: {
+    rating: {
+      star: star,
+      comment: comment,
+      postedby: _id,
+    },
+  },
+ },{
+  new: true,
+ }) 
+}
+
+//All Ratings Oprations total, sum, actual num
+const getAllRatingns=await Product.findById(prodId);
+let totalRating = getAllRatingns.rating.length;//(Number the users rating)
+let ratingSum= getAllRatingns.rating.map((item)=>item.star).reduce((prev, curr)=> prev + curr, 0);//number Stars
+let actualRating= Math.round(ratingSum/ totalRating);//Modal, sumStars div totalStars  
+let finalProduct= await Product.findByIdAndUpdate(prodId, {
+  totalRating: actualRating, //actualice ratio Stars
+}, {
+  new: true,
+});
+ res.json(finalProduct)
+} catch (error) {
+  throw new Error(error);
+}
+})
 
 module.exports = {
   createProduct,
@@ -113,4 +183,6 @@ module.exports = {
   getAllProduct,
   updateProduct,
   deleteProduct,
+  addToWishList,
+  rating,
 };
