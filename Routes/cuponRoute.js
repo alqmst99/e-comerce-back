@@ -14,7 +14,7 @@ router.put('/update/:id', authMiddlewere, isAdmin, updateCupon);
 //Get One Cupon
 router.get('/:id', authMiddlewere, isAdmin, getCupon);
 
-//Get One Cupon
+//Get One Cupon Router
 router.get('/', authMiddlewere, isAdmin, getACupon);
 
 //Delete Cupon Router
