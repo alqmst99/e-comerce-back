@@ -15,7 +15,7 @@ var cuponSchema = new mongoose.Schema({
     },
 
    discount:{
-        type:number,
+        type:Number,
         required:true,
     },
 });

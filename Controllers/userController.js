@@ -49,16 +49,49 @@ const loginUserCtrl = asyncHandler(async (req, res) => {
         new: true,
       }
     );
-    //res.cookie("refreshToken", refreshToken, {
-    //  httpOnly: true,
-    //  maxAge: 72 * 60 * 60 * 1000,
-    //});
+    res.cookie("refreshToken", refreshToken, {
+     httpOnly: true,
+     maxAge: 72 * 60 * 60 * 1000,
+    });
     res.json({
       _id: findUser?._id,
       firstName: findUser?.firstName,
       email: findUser?.email,
       mobile: findUser?.mobile,
       token: generateToken(findUser?._id),
+    });
+  } else {
+    throw new Error("Inavalid Credentials");
+  }
+});
+
+//admin login
+const loginAdminCtrl = asyncHandler(async (req, res) => {
+  const { email, password } = req.body;
+  //check if user exists or not
+  const findAdmin = await User.findOne({ email });
+  if (findUser && (await findAdmin.isPasswordMatched(password))) {
+    const refreshToken = await refreshToken(findAdmin.id);
+    if(findAdmin.rol !== 'admin') throw new Error("Not Authorised");
+    const updateuser = await User.findByIdAndUpdate(
+      findAdmin.id,
+      {
+        refreshToken: refreshToken,
+      },
+      {
+        new: true,
+      }
+    );
+    res.cookie("refreshToken", refreshToken, {
+     httpOnly: true,
+     maxAge: 72 * 60 * 60 * 1000,
+    });
+    res.json({
+      _id: findAdmin?._id,
+      firstName: findAdmin?.firstName,
+      email: findAdmin?.email,
+      mobile: findAdmin?.mobile,
+      token: generateToken(findAdmin?._id),
     });
   } else {
     throw new Error("Inavalid Credentials");
@@ -135,6 +168,21 @@ const updateUser = asyncHandler(async (req, res) => {
   }
 });
 
+//Save user Address
+const saveAddress = asyncHandler(async (req, res)=>{
+  const {_id}= req.user;
+  validateMongosDBId(_id);
+  try {
+    const UpdateUser= await User.findByIdAndUpdate(_id,{
+      address: req?.body?.address,
+    },
+    {
+      new:true,
+    });
+  } catch (error) {
+    throw new Error(error);
+  }
+})
 // Get all users
 
 const getaUser = asyncHandler(async (req, res) => {
@@ -279,6 +327,7 @@ res.json(user);
 
 module.exports = {
   createUser,
+  loginAdminCtrl,
   loginUserCtrl,
   getaUser,
   getUser,
@@ -290,5 +339,6 @@ module.exports = {
   logout,
   updatePassword,
   forgotPasswordToken,
-  resetPassword
+  resetPassword,
+  saveAddress,
 };

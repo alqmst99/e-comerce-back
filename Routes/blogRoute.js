@@ -31,7 +31,7 @@ router.put(
   "/upload/:id",
   authMiddlewere,
   isAdmin,
-  uploadPhoto.array("images", 10),
+  uploadPhoto.array("images", 2),
   ImgBlogResize,
   uploadBImage
 );

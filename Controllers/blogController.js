@@ -3,7 +3,7 @@ const User = require("./../Models/userModel");
 const asyncHandler = require("express-async-handler");
 const validateMonfoDbId = require("../Utils/validateMongodbid");
 const validateMongosDBId = require("../Utils/validateMongodbid");
-
+const fs= require('fs');
 //*************************Api Rest Blog Controller *************************//
 
 //Create Bolg
@@ -209,8 +209,9 @@ const uploadBImage = asyncHandler(async (req, res) => {
       const { path } = file;
       const newPath = await uploader(path);
       urls.push(newPath);
+      fs.unlinkSync(path);
     }
-    const findProduct = await Blog.findByIdAndUpdate(
+    const findBlog = await Blog.findByIdAndUpdate(
       id,
       {
         images: urls.map((files) => {
@@ -221,6 +222,7 @@ const uploadBImage = asyncHandler(async (req, res) => {
         new: true,
       }
     );
+    res.json(findBlog);
   } catch (error) {
     throw new Error(error);
   }

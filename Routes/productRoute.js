@@ -38,11 +38,11 @@ router.put(
 router.put("/:id", authMiddlewere, isAdmin, updateProduct);
 
 //Add Wish List
-router.put("/wishlist", authMiddlewere, isAdmin, addToWishList);
+router.put("/wishlist", authMiddlewere, addToWishList);
 
 //Rating
 
-router.put("/rating", authMiddlewere, isAdmin, rating);
+router.put("/rating", authMiddlewere, rating);
 
 //Delete product Route
 

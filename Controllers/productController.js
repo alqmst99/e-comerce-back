@@ -1,5 +1,7 @@
 const Product = require("../Models/productModel");
+const User= require('./../Models/userModel')
 const asyncHandler = require("express-async-handler");
+const fs = require('fs')
 const cloudinaryUploadImg = require("./../Utils/cloudinary");
 const slugify = require("slugify");
 
@@ -194,7 +196,7 @@ const rating = asyncHandler(async (req, res) => {
 });
 
 //Upload Image
-const uploadImage = asyncHandler(async (req, res) => {
+const uploadPImage = asyncHandler(async (req, res) => {
   const { id } = req.params;
 
   try {
@@ -205,6 +207,7 @@ const uploadImage = asyncHandler(async (req, res) => {
       const { path } = file;
       const newPath = await uploader(path);
       urls.push(newPath);
+      fs.unlinkSync(path);
     }
     const findProduct = await Product.findByIdAndUpdate(
       id,
@@ -217,6 +220,18 @@ const uploadImage = asyncHandler(async (req, res) => {
         new: true,
       }
     );
+    res.json(findProduct);
+  } catch (error) {
+    throw new Error(error);
+  }
+});
+
+//Get whisList
+const getWishList= asyncHandler(async( req, res)=>{
+  const {_id}= req.user;
+  try {
+    const findUser= await User.findById(_id).populate('wishlist');
+    res.json(findUser);
   } catch (error) {
     throw new Error(error);
   }
@@ -230,5 +245,6 @@ module.exports = {
   deleteProduct,
   addToWishList,
   rating,
-  uploadImage,
+  uploadPImage,
+  getWishList,
 };
