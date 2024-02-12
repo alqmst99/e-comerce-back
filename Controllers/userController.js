@@ -1,15 +1,17 @@
-const expressAsyncHandler = require("express-async-handler");
 const User = require("../Models/userModel");
+const Product = require("../Models/productModel");
+const Cart = require("../Models/cartModel");
+const Cupon = require("../Models/cuponModel");
+const Order = require("../Models/orderModel");
 const asyncHandler = require("express-async-handler");
 const { generateToken } = require("../Config/jwtToken");
-const crypto = require('crypto')
-const { parse } = require("dotenv");
-const { param } = require("../Routes/authRoute");
+const crypto = require("crypto");
 const validateMongosDBId = require("../Utils/validateMongodbid");
 const { refreshToken } = require("../Config/refreshToken");
 const { JsonWebTokenError } = require("jsonwebtoken");
 const jwt = require("jsonwebtoken");
 const sendEmail = require("./emailController");
+var uniquid= require('uniqid');
 
 //*************************Api Rest USER Controller *************************//
 
@@ -50,8 +52,8 @@ const loginUserCtrl = asyncHandler(async (req, res) => {
       }
     );
     res.cookie("refreshToken", refreshToken, {
-     httpOnly: true,
-     maxAge: 72 * 60 * 60 * 1000,
+      httpOnly: true,
+      maxAge: 72 * 60 * 60 * 1000,
     });
     res.json({
       _id: findUser?._id,
@@ -72,7 +74,7 @@ const loginAdminCtrl = asyncHandler(async (req, res) => {
   const findAdmin = await User.findOne({ email });
   if (findUser && (await findAdmin.isPasswordMatched(password))) {
     const refreshToken = await refreshToken(findAdmin.id);
-    if(findAdmin.rol !== 'admin') throw new Error("Not Authorised");
+    if (findAdmin.rol !== "admin") throw new Error("Not Authorised");
     const updateuser = await User.findByIdAndUpdate(
       findAdmin.id,
       {
@@ -83,8 +85,8 @@ const loginAdminCtrl = asyncHandler(async (req, res) => {
       }
     );
     res.cookie("refreshToken", refreshToken, {
-     httpOnly: true,
-     maxAge: 72 * 60 * 60 * 1000,
+      httpOnly: true,
+      maxAge: 72 * 60 * 60 * 1000,
     });
     res.json({
       _id: findAdmin?._id,
@@ -169,20 +171,23 @@ const updateUser = asyncHandler(async (req, res) => {
 });
 
 //Save user Address
-const saveAddress = asyncHandler(async (req, res)=>{
-  const {_id}= req.user;
+const saveAddress = asyncHandler(async (req, res) => {
+  const { _id } = req.user;
   validateMongosDBId(_id);
   try {
-    const UpdateUser= await User.findByIdAndUpdate(_id,{
-      address: req?.body?.address,
-    },
-    {
-      new:true,
-    });
+    const UpdateUser = await User.findByIdAndUpdate(
+      _id,
+      {
+        address: req?.body?.address,
+      },
+      {
+        new: true,
+      }
+    );
   } catch (error) {
     throw new Error(error);
   }
-})
+});
 // Get all users
 
 const getaUser = asyncHandler(async (req, res) => {
@@ -268,63 +273,226 @@ const unBlockUser = asyncHandler(async (req, res) => {
   }
 });
 
-
 //Update Password
-const updatePassword = asyncHandler( async (req, res)=>{
-  const{_id}= req.user;
-  const {password} = req.body;
+const updatePassword = asyncHandler(async (req, res) => {
+  const { _id } = req.user;
+  const { password } = req.body;
   validateMongosDBId(_id);
-  const user= await User.findById(_id);
-  if(password){
-    user.password= password;
-    const updatedPassword =await user.save();
-    res.json(updatedPassword)
-  } else{
-    res.json(user)
+  const user = await User.findById(_id);
+  if (password) {
+    user.password = password;
+    const updatedPassword = await user.save();
+    res.json(updatedPassword);
+  } else {
+    res.json(user);
   }
 });
 
 //Forgot password
 
-const forgotPasswordToken = asyncHandler(async(req, res)=>{
-const {email}= req.body;
-const user = await User.findOne({email});
-if(!user) throw new Error ('User not found with this email');
-try {
-  const token = await user.createPasswordResetToken();
-  await user.save();
-  const resetURL = `Hi, place follow this link to reset Your Password. this link is valid till 10 minutes from now. <a href='http://localhost:5000/api/user/reset-password/${token}>Click Here</a>`;
-  const data={
-    to:email,
-    text:"Hey user",
-    subject:"Forgot Password",
-    htm: resetURL,
+const forgotPasswordToken = asyncHandler(async (req, res) => {
+  const { email } = req.body;
+  const user = await User.findOne({ email });
+  if (!user) throw new Error("User not found with this email");
+  try {
+    const token = await user.createPasswordResetToken();
+    await user.save();
+    const resetURL = `Hi, place follow this link to reset Your Password. this link is valid till 10 minutes from now. <a href='http://localhost:5000/api/user/reset-password/${token}>Click Here</a>`;
+    const data = {
+      to: email,
+      text: "Hey user",
+      subject: "Forgot Password",
+      htm: resetURL,
+    };
+    sendEmail(data);
+    res.json(token);
+  } catch (error) {
+    throw new Error(error);
   }
-  sendEmail(data);
-  res.json(token);
+});
+
+//Reset password
+
+const resetPassword = asyncHandler(async (req, res) => {
+  const { password } = req.body;
+  const { token } = req.params;
+  const hashedToken = crypto.createHash("sha256").update(token).digest("hex");
+  const user = await User.findOne({
+    passwordResetToken: hashedToken,
+    passwordResetExpires: { $gt: Date.now() },
+  });
+  if (!user) throw new Error("Token Expired, Plase try again later");
+  user.password = password;
+  user.passwordResetToken = undefined;
+  user.passwordResetExpires = undefined;
+  await user.save();
+  res.json(user);
+});
+//whisList
+const getwishList = asyncHandler(async (req, res) => {
+  const { _id } = req.user;
+  try {
+    const findUser = await User.findById(_id).populate("wishlist");
+    res.json(findUser);
+  } catch (error) {
+    throw new Error(error);
+  }
+});
+
+//Cart Order
+const userCart = asyncHandler(async (req, res) => {
+  const { cart } = req.body;
+  const { _id } = req.user;
+
+  validateMongosDBId(_id);
+  try {
+    let products = [];
+    const user = await User.findById(_id);
+
+    //check if user already have product
+    const alreadyExistCart = await Cart.findOne({ orderby: user._id });
+    if (alreadyExistCart) {
+      alreadyExistCart.remove();
+    }
+    for (let i = 0; i < cart.length; i++) {
+      let object = {};
+      object.product = cart[i]._id;
+      object.count = cart[i].count;
+      object.color = cart[i].color;
+      let getPrice = await Product.findById(cart[i]._id).select("price").exec();
+      object.price = cart[i].price;
+      products.push(object);
+    }
+    let cartTotal = 0;
+    for (let i = 0; i < products.length; i++) {
+      cartTotal = cartTotal + products[i].price * products[i].count;
+    }
+    res.json(newCart);
+    let newCart = await new Cart({
+      products,
+      cartTotal,
+      orderby: user?._id,
+    }).save();
+  } catch (error) {
+    throw new Error(error);
+  }
+});
+const getUserCart = asyncHandler(async (req, res) => {
+  const {_id}= req.user;
+  validateMongosDBId(_id);
+  try {
+    const cart= await Cart.findOne({orederby: _id}).populate("products.product");
+    res.json(cart);
+  } catch (error) {
+    throw new Error(error);
+  }
+});
+
+const emptyCart= asyncHandler( async (req, res)=>{
+  const {_id}= req.user;
+  validateMongosDBId(_id);
+  try {
+    const user= await User.findOne({ _id});
+    const cart= await Cart.findByIdAndRemove({orederby:user._id})
+    res.json(cart);
+  } catch (error) {
+    throw new Error(error);
+  }
+});
+
+//Coupon
+const applyCoupon= asyncHandler( async (req, res)=>{
+const {coupon}= req.body;
+const {_id}= req.user;
+validateMongosDBId(_id);
+const validCoupon= await Cupon.findOne({name:coupon});
+if(validCoupon== null){
+  throw new Error("Invalid Coupon")
+}
+const user= await User.findOne({_id});
+let {cartTotal} = await Cart.findOne({orderby: user._id}).populate("products.product");
+let totalAdterDiscount= (cartTotal - (cartTotal* validCoupon.discount)/100).toFixed(2);
+await Cart.findOneAndUpdate({orderby: user._id}, {totalAdterDiscount}, {new:true});
+res.json(totalAdterDiscount)
+});
+
+//Order
+
+const createOrder= asyncHandler( async (req, res)=>{
+const {COD, cuponApplied}= req.body;
+const {_id}= req.user;
+validateMongosDBId(_id);
+try {
+  if(!COD) throw new Error('Create cash order failed');
+const user= await User.findById(_id);
+let userCart= await Cart.findOne({orderby: user._id});
+let finalAmount= 0;
+if(cuponApplied && userCart.totalAfterDiscount){
+  finalAmount= userCart.totalAfterDiscount *100
+}else{
+  finalAmount= userCart.cartTotal *100;
+}
+
+let newOrder = await new Order({
+  product: userCart.products,
+  paymentIntent:{
+    //use uniqid
+    id: uniquid(),
+    method: "COD",
+    amount: finalAmount,
+    status: "Cash on Delivery",
+    created: Date.now(),
+    currency: "usd",
+  },
+  orderby: user._id,
+  orderStatus:"Cash on Delivery",
+
+}).save();
+let update= userCart.products.map((item)=>{
+  return{
+    updateOne:{
+      filter:{_id: item.product._id },
+      update:{$inc: { quantity: -item.count, sold: +item.count}},
+    },
+  };
+});
+const updated = await Product.bulkWrite(update, {});
+res.json({message: "success"});
+
 } catch (error) {
   throw new Error(error);
 }
 });
 
-//Reset password
+const getOrders= asyncHandler ( async (req, res)=>{
+  const {_id}= req.user;
+  validateMongosDBId(_id);
+  try {
+    const userOrders = await Order.findOne({orderby:_id}).populate('products.product').exec();
+    res.json(userOrders);
+  } catch (error) {
+    throw new Error(error);
+  }
+});
 
-const resetPassword = asyncHandler( async(req, res)=>{
-  const{password} = req.body;
-  const{token}= req.params;
-  const hashedToken =crypto.createHash('sha256').update(token).digest("hex");
-  const user =  await User.findOne({
-    passwordResetToken: hashedToken,
-    passwordResetExpires: {$gt: Date.now()}
-  });
-if(!user) throw new Error('Token Expired, Plase try again later')
-user.password= password;
-user.passwordResetToken=undefined;
-user.passwordResetExpires= undefined;
-await user.save();
-res.json(user);
-})
-
+const UpdateOrderStatus= asyncHandler(async (req, res)=>{
+const{status}= req.body;
+const{id}=req.params;
+validateMongosDBId(id);
+try {
+  const findOrder= await Order.findByIdAndUpdate(id, {
+    orderStatus:status, 
+    paymentIntent:{
+    status:status,
+  }
+},
+{new:true}
+);
+  res.json(findOrder);
+} catch (error) {
+  throw new Error(error);
+}
+});
 module.exports = {
   createUser,
   loginAdminCtrl,
@@ -341,4 +509,12 @@ module.exports = {
   forgotPasswordToken,
   resetPassword,
   saveAddress,
+  getwishList,
+  userCart,
+  getUserCart,
+  emptyCart,
+  applyCoupon,
+  createOrder,
+  getOrders,
+  UpdateOrderStatus,
 };
