@@ -1,8 +1,11 @@
 const Product = require("../Models/productModel");
-const User= require('./../Models/userModel')
+const User = require("./../Models/userModel");
 const asyncHandler = require("express-async-handler");
-const fs = require('fs')
-const cloudinaryUploadImg = require("./../Utils/cloudinary");
+const fs = require("fs");
+const {
+  cloudinaryUploadImg,
+  cloudinaryDeleteImg,
+} = require("./../Utils/cloudinary");
 const slugify = require("slugify");
 
 //*************************Api Rest Product Controller *************************/
@@ -209,28 +212,33 @@ const uploadPImage = asyncHandler(async (req, res) => {
       urls.push(newPath);
       fs.unlinkSync(path);
     }
-    const findProduct = await Product.findByIdAndUpdate(
-      id,
-      {
-        images: urls.map((files) => {
-          return files;
-        }),
-      },
-      {
-        new: true,
-      }
-    );
-    res.json(findProduct);
+    const images = urls.map((file) => {
+      return file;
+    });
+
+    res.json(images);
+  } catch (error) {
+    throw new Error(error);
+  }
+});
+
+//Delete Image
+const deletePImage = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const deleted = cloudinaryDeleteImg(id, "images");
+    res.json(deleted, { message: "Deleted" });
   } catch (error) {
     throw new Error(error);
   }
 });
 
 //Get whisList
-const getWishList= asyncHandler(async( req, res)=>{
-  const {_id}= req.user;
+const getWishList = asyncHandler(async (req, res) => {
+  const { _id } = req.user;
   try {
-    const findUser= await User.findById(_id).populate('wishlist');
+    const findUser = await User.findById(_id).populate("wishlist");
     res.json(findUser);
   } catch (error) {
     throw new Error(error);
@@ -246,5 +254,6 @@ module.exports = {
   addToWishList,
   rating,
   uploadPImage,
+  deletePImage,
   getWishList,
 };

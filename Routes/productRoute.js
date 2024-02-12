@@ -8,6 +8,7 @@ const {
   addToWishList,
   rating,
   uploadPImage,
+  deletePImage,
 } = require("../Controllers/productController");
 const { imgProdUpload } = require("./../Utils/cloudinary");
 const { isAdmin, authMiddlewere } = require("../middlewares/authMiddlewere");
@@ -26,7 +27,7 @@ router.get("/", getAllProduct);
 //Upload product Image Route
 
 router.put(
-  "/upload/:id",
+  "/upload",
   authMiddlewere,
   isAdmin,
   uploadPhoto.array("images", 10),
@@ -45,7 +46,6 @@ router.put("/wishlist", authMiddlewere, addToWishList);
 router.put("/rating", authMiddlewere, rating);
 
 //Delete product Route
-
 router.delete("/:id", authMiddlewere, isAdmin, deleteProduct);
-
+router.delete("/delete-img/:id", authMiddlewere, isAdmin, deletePImage);
 module.exports = router;

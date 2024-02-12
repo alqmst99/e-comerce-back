@@ -9,9 +9,10 @@ const productRouter = require('./Routes/productRoute');
 const categoryRouter = require('./Routes/categoryRoute');
 const blogCatRouter = require('./Routes/blogCatRouter');
 const brandRouter = require('./Routes/brandRoute');
+const colorRouter = require('./Routes/colorRoute');
 const blogRouter = require('./Routes/blogRoute');
 const cuponRouter = require('./Routes/cuponRoute');
-
+const InquiryRouter = require('./Routes/enqRoute');
 const morgan = require("morgan");
 
 //inicalize Express
@@ -37,7 +38,9 @@ app.use('/api/blog', blogRouter);
 app.use('/api/product/cat', categoryRouter);
 app.use('/api/blog/cat', blogCatRouter);
 app.use('/api/brand', brandRouter);
-app.use('/api/cupon', cuponRouter);
+app.use('/api/color', colorRouter);
+app.use('/api/inquiry', colorRouter);
+app.use('/api/cupon', InquiryRouter);
 app.use(notFound);
 app.use(errorHandler);
 
