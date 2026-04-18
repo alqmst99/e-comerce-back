@@ -12,10 +12,10 @@ router.post("/new", authMiddlewere, isAdmin, createBrand);
 router.put('/update/:id', authMiddlewere, isAdmin, updateBrand);
 
 //Get One Brand
-router.get('/:id', authMiddlewere, isAdmin, getBrand);
+router.get('/:id',  getBrand);
 
 //Get One Brand
-router.get('/', authMiddlewere, isAdmin, getABrand);
+router.get('/',  getABrand);
 
 //Delete Brand Router
 router.delete(':id', authMiddlewere, isAdmin, deleteBrand);

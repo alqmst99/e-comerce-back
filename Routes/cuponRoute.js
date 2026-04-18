@@ -12,10 +12,10 @@ const router= express.Router();
 router.put('/update/:id', authMiddlewere, isAdmin, updateCupon);
 
 //Get One Cupon
-router.get('/:id', authMiddlewere, isAdmin, getCupon);
+router.get('/:id',  getCupon);
 
 //Get One Cupon Router
-router.get('/', authMiddlewere, isAdmin, getACupon);
+router.get('/', getACupon);
 
 //Delete Cupon Router
 router.delete(':id', authMiddlewere, isAdmin, deleteCupon);

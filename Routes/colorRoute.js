@@ -18,10 +18,10 @@ router.post("/new", authMiddlewere, isAdmin, createColor);
 router.put("/update/:id", authMiddlewere, isAdmin, updateColor);
 
 //Get One Color
-router.get("/:id", authMiddlewere, isAdmin, getColor);
+router.get("/:id", getColor);
 
 //Get One Color
-router.get("/", authMiddlewere, isAdmin, getAColor);
+router.get("/", getAColor);
 
 //Delete Color Router
 router.delete(":id", authMiddlewere, isAdmin, deleteColor);

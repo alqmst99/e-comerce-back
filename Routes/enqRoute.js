@@ -1,29 +1,12 @@
 const express = require("express");
-const {
-  createInquiry,
-  updateInquiry,
-  deleteInquiry,
-  getInquiry,
-  getAInquiry,
-} = require("../Controllers/enqController");
+const { createEnquiry, updateEnquiry, deleteEnquiry, getEnquiry, getallEnquiry } = require("../Controllers/enqController");
 const { authMiddlewere, isAdmin } = require("../middlewares/authMiddlewere");
 const router = express.Router();
 
-//*************************Routes Inquiry *************************//
-
-//Create Inquiry Router
-router.post("/new", authMiddlewere, isAdmin, createInquiry);
-
-//Update Inquiry Router
-router.put("/update/:id", authMiddlewere, isAdmin, updateInquiry);
-
-//Get One Inquiry
-router.get("/:id", authMiddlewere, isAdmin, getInquiry);
-
-//Get One Inquiry
-router.get("/", authMiddlewere, isAdmin, getAInquiry);
-
-//Delete Inquiry Router
-router.delete(":id", authMiddlewere, isAdmin, deleteInquiry);
+router.post("/", createEnquiry);
+router.put("/:id", authMiddlewere, isAdmin, updateEnquiry);
+router.delete("/:id", authMiddlewere, isAdmin, deleteEnquiry);
+router.get("/:id", getEnquiry);
+router.get("/", getallEnquiry);
 
 module.exports = router;

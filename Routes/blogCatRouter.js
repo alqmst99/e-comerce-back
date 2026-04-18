@@ -12,10 +12,10 @@ router.post("/new", authMiddlewere, isAdmin, createBCategory);
 router.put('/update/:id', authMiddlewere, isAdmin, updateBCategory);
 
 //Get One Category
-router.get('/:id', authMiddlewere, isAdmin, getBCategory);
+router.get('/:id', getBCategory);
 
 //Get One Category
-router.get('/', authMiddlewere, isAdmin, getABCategory);
+router.get('/',  getABCategory);
 
 //Delete Category Router
 router.delete(':id', authMiddlewere, isAdmin, deleteBCategory);

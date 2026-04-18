@@ -1,82 +1,82 @@
-const Iquiry = require("../Models/enqModel");
+const Inquiry = require("../Models/enqModel");
 const expressAsyncHandler = require("express-async-handler");
 const validateMongosDBId = require("../Utils/validateMongodbid");
 
-//*************************Api Rest Iquiry Controller *************************//
+//*************************Api Rest Inquiry Controller *************************//
 
-//Create Iquiry
-const createIquiry = expressAsyncHandler(async (req, res) => {
+//Create Inquiry
+const createInquiry = expressAsyncHandler(async (req, res) => {
   try {
-    const newIquiry = await Iquiry.create(req.body);
+    const newInquiry = await Inquiry?.create(req.body);
     res.json({
       message: "success",
-      newIquiry,
+      newInquiry,
     });
   } catch (error) {
     throw new Error(error);
   }
 });
 
-//Update Iquiry
-const updateIquiry = expressAsyncHandler(async (req, res) => {
+//Update Inquiry
+const updateInquiry = expressAsyncHandler(async (req, res) => {
   const { id } = req.params;
   //validateMongosDBId(id : _id)
   try {
-    const updateIquiry = await Iquiry.findByIdAndUpdate(id, req.body, {
+    const updateInquiry = await Inquiry.findByIdAndUpdate(id, req.body, {
       new: true,
     });
     res.json({
       message: "success",
-      updateIquiry,
+      updateInquiry,
     });
   } catch (error) {
     throw new Error(error);
   }
 });
 
-//Get Iquiry
-const getIquiry = expressAsyncHandler(async (req, res) => {
+//Get Inquiry
+const getInquiry = expressAsyncHandler(async (req, res) => {
   const { id } = body.params;
   try {
-    const getIquiry = await Iquiry.findById(id);
+    const getInquiry = await Inquiry.findById(id);
     res.json({
       message: "success",
-      getIquiry,
+      getInquiry,
     });
   } catch (error) {
     throw new Error(error);
   }
 });
 
-//Get All Iquiry
-const getAIquiry = expressAsyncHandler(async (req, res) => {
+//Get All Inquiry
+const getAInquiry = expressAsyncHandler(async (req, res) => {
  
     try {
-      const getAIquiry = await Iquiry.find();
+      const getAInquiry = await Inquiry.find();
       res.json({
         message: "success",
-        getAIquiry,
+        getAInquiry,
       });
     } catch (error) {
       throw new Error(error);
     }
   });
 
-//Delete Iquiry
-const deleteIquiry = expressAsyncHandler(async (req, res) => {
+//Delete Inquiry
+const deleteInquiry = expressAsyncHandler(async (req, res) => {
   const { id } = req.params;
   //validateMongosDBId(id)
   try {
-    const deleteIquiry = await Iquiry.findByIdAndUpdate(id, req.body, {
+    const deleteInquiry = await Inquiry.findByIdAndUpdate(id, req.body, {
       new: true,
     });
     res.json({
       message: "success",
-      deleteIquiry,
+      deleteInquiry,
     });
   } catch (error) {
     throw new Error(error);
   }
 });
 
-module.exports = { createIquiry, updateIquiry, getIquiry, getAIquiry,deleteIquiry };
+module.exports = { createInquiry, updateInquiry, getInquiry, getAInquiry,deleteInquiry };
